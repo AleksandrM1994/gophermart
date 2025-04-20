@@ -20,3 +20,21 @@ func (r *OrderRepositoryImpl) CreateOrder(ctx context.Context, order *Order) err
 	}
 	return nil
 }
+
+func (r *OrderRepositoryImpl) GetOrders(ctx context.Context, userID string) ([]*Order, error) {
+	var orders []*Order
+	err := r.db.Model(&Order{}).Where("user_id = ?", userID).Find(&orders).Error
+	if err != nil {
+		return nil, fmt.Errorf("get orders: %w", err)
+	}
+	return orders, nil
+}
+
+func (r *OrderRepositoryImpl) GetOrderById(ctx context.Context, id string) (*Order, error) {
+	var order *Order
+	err := r.db.Model(&Order{}).Where("id = ?", id).Find(&order).Error
+	if err != nil {
+		return nil, fmt.Errorf("get orders: %w", err)
+	}
+	return order, nil
+}

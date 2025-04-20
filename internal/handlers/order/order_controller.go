@@ -1,4 +1,4 @@
-package order_handlers
+package order
 
 import (
 	"github.com/gin-gonic/gin"
@@ -7,16 +7,16 @@ import (
 	"github.com/gophermart/config"
 	"github.com/gophermart/internal/handlers/middlewares"
 	"github.com/gophermart/internal/repository"
-	"github.com/gophermart/internal/service/auth_services"
-	"github.com/gophermart/internal/service/order_services"
+	"github.com/gophermart/internal/service/order"
+	"github.com/gophermart/internal/service/user"
 )
 
 type OrderController struct {
 	lg           *zap.SugaredLogger
 	cfg          config.Config
 	repo         *repository.Repository
-	userService  *auth_services.UserServiceImpl
-	orderService *order_services.OrderServiceImpl
+	userService  *user.UserServiceImpl
+	orderService *order.OrderServiceImpl
 }
 
 func NewOrderController(lg *zap.SugaredLogger, cfg config.Config, repo *repository.Repository) *OrderController {
@@ -24,12 +24,13 @@ func NewOrderController(lg *zap.SugaredLogger, cfg config.Config, repo *reposito
 		lg:  lg,
 		cfg: cfg,
 	}
-	controller.userService = auth_services.NewUserService(lg, cfg, repo)
-	controller.orderService = order_services.NewOrderService(lg, cfg, repo)
+	controller.userService = user.NewUserService(lg, cfg, repo)
+	controller.orderService = order.NewOrderService(lg, cfg, repo)
 	return controller
 }
 
 func (c *OrderController) Register(r *gin.Engine) {
-	orders := r.Group("/api/user", middlewares.Authorizer(c.lg, c.cfg, c.userService))
-	orders.POST("/orders", c.CreateOrder)
+	orderGroup := r.Group("/api/user").Use(middlewares.Authorizer(c.lg, c.cfg, c.userService))
+	orderGroup.POST("/orders", c.CreateOrder)
+	orderGroup.GET("/orders", c.GetOrders)
 }

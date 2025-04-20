@@ -1,4 +1,4 @@
-package auth_handlers
+package user
 
 import (
 	"go.uber.org/zap"
@@ -7,14 +7,14 @@ import (
 
 	"github.com/gophermart/config"
 	"github.com/gophermart/internal/repository"
-	"github.com/gophermart/internal/service/auth_services"
+	"github.com/gophermart/internal/service/user"
 )
 
 type UserController struct {
 	cfg     config.Config
 	lg      *zap.SugaredLogger
 	repo    *repository.Repository
-	service *auth_services.UserServiceImpl
+	service *user.UserServiceImpl
 }
 
 func NewUserController(cfg config.Config, logger *zap.SugaredLogger, repo *repository.Repository) *UserController {
@@ -22,7 +22,7 @@ func NewUserController(cfg config.Config, logger *zap.SugaredLogger, repo *repos
 		cfg: cfg,
 		lg:  logger,
 	}
-	controller.service = auth_services.NewUserService(logger, cfg, repo)
+	controller.service = user.NewUserService(logger, cfg, repo)
 	return controller
 }
 

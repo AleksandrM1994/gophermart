@@ -19,7 +19,7 @@ var cfg Config
 func Init() Config {
 	flag.StringVar(&cfg.HTTPAddress, "a", ":8080", "HTTP run address")
 	flag.StringVar(&cfg.AccrualSystemAddress, "r", "localhost:8081", "accrual run url")
-	flag.StringVar(&cfg.DSN, "d", "user=postgres password=postgres dbname=praktikum host=localhost port=5432 sslmode=disable", "db connection")
+	flag.StringVar(&cfg.DSN, "d", "user=postgres password=postgres dbname=praktikum host=postgres port=5432 sslmode=disable", "db connection")
 	flag.StringVar(&cfg.HashSecret, "h", "my_secret", "hash secret")
 	flag.StringVar(&cfg.AuthUserCookieName, "c", "auth_cookie", "auth cookie name")
 

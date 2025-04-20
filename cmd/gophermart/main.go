@@ -6,8 +6,8 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/gophermart/config"
-	"github.com/gophermart/internal/handlers/auth_handlers"
-	"github.com/gophermart/internal/handlers/order_handlers"
+	"github.com/gophermart/internal/handlers/order"
+	"github.com/gophermart/internal/handlers/user"
 	"github.com/gophermart/internal/repository"
 )
 
@@ -34,10 +34,10 @@ func main() {
 		lg.Fatalf("repository.NewRepository, %w", err)
 	}
 
-	userController := auth_handlers.NewUserController(cfg, lg, repo)
+	userController := user.NewUserController(cfg, lg, repo)
 	userController.RegisterRoutes(g)
 
-	orderController := order_handlers.NewOrderController(lg, cfg, repo)
+	orderController := order.NewOrderController(lg, cfg, repo)
 	orderController.Register(g)
 
 	err = g.Run(cfg.HTTPAddress)

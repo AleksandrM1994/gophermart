@@ -8,11 +8,11 @@ import (
 
 	"github.com/gophermart/config"
 	"github.com/gophermart/internal/errors"
-	"github.com/gophermart/internal/service/auth_services"
-	"github.com/gophermart/internal/service/auth_services/dto"
+	"github.com/gophermart/internal/service/user"
+	"github.com/gophermart/internal/service/user/dto"
 )
 
-func Authorizer(lg *zap.SugaredLogger, cfg config.Config, srv *auth_services.UserServiceImpl) gin.HandlerFunc {
+func Authorizer(lg *zap.SugaredLogger, cfg config.Config, srv *user.UserServiceImpl) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		cookie, errCookie := ctx.Request.Cookie(cfg.AuthUserCookieName)
 		if errCookie != nil {

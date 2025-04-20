@@ -26,7 +26,7 @@ func (Session) TableName() string {
 
 type Order struct {
 	ID         string      `db:"id;primary_key"`
-	Accrual    float64     `db:"accrual"`
+	Accrual    int         `db:"accrual"`
 	Status     OrderStatus `gorm:"type:enum('UNKNOWN', 'REGISTERED', 'INVALID', 'PROCESSING', 'PROCESSED')"`
 	UploadedAt *time.Time  `db:"uploaded_at;not null"`
 	UserID     string      `db:"user_id;not null"`
@@ -38,7 +38,7 @@ func (Order) TableName() string {
 
 type Withdrawal struct {
 	OrderID     string     `db:"order_id;primary_key"`
-	Sum         float64    `db:"sum"`
+	Sum         int        `db:"sum"`
 	ProcessedAt *time.Time `db:"processed_at;not null"`
 	UserID      string     `db:"user_id;not null"`
 }

@@ -3,6 +3,10 @@ package repository
 import (
 	"context"
 	"fmt"
+
+	"github.com/lib/pq"
+
+	custom_errs "github.com/gophermart/internal/errors"
 )
 
 type UserRepositoryImpl struct {
@@ -16,6 +20,11 @@ func NewUserRepository(repo *Repository) *UserRepositoryImpl {
 func (r *UserRepositoryImpl) CreateUser(ctx context.Context, user *User, session *Session) error {
 	err := r.db.Create(user).Error
 	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok {
+			if pqErr.Code == "23505" {
+				return fmt.Errorf("error create user: %w", custom_errs.ErrDuplicateKey)
+			}
+		}
 		return fmt.Errorf("failed to create user: %w", err)
 	}
 

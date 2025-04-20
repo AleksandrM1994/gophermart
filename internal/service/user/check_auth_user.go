@@ -1,4 +1,4 @@
-package auth_services
+package user
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"time"
 
 	custom_errs "github.com/gophermart/internal/errors"
-	"github.com/gophermart/internal/service/auth_services/dto"
+	"github.com/gophermart/internal/service/user/dto"
 )
 
 func (s *UserServiceImpl) CheckAuthUser(ctx context.Context, req *dto.CheckAuthRequest) (*dto.CheckAuthResponse, error) {

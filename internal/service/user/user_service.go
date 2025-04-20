@@ -1,9 +1,9 @@
-package auth_services
+package user
 
 import (
 	"context"
 
-	dto2 "github.com/gophermart/internal/service/auth_services/dto"
+	dto2 "github.com/gophermart/internal/service/user/dto"
 )
 
 type UserService interface {

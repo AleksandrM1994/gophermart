@@ -1,4 +1,4 @@
-package auth_services
+package user
 
 import (
 	"context"
@@ -9,10 +9,15 @@ import (
 
 	"github.com/gophermart/internal/repository"
 	"github.com/gophermart/internal/service"
-	"github.com/gophermart/internal/service/auth_services/dto"
+	"github.com/gophermart/internal/service/user/dto"
 )
 
 func (s *UserServiceImpl) CreateUser(ctx context.Context, req *dto.CreateUserRequest) error {
+	errValidate := req.Validate()
+	if errValidate != nil {
+		return fmt.Errorf("validate: %w", errValidate)
+	}
+
 	loginHash, err := service.HashData(s.cfg.HashSecret, []byte(req.Login))
 	if err != nil {
 		return fmt.Errorf("failed to hash login: %w", err)
@@ -45,7 +50,7 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, req *dto.CreateUserReq
 			UserID:       id,
 		})
 	if errCreateUser != nil {
-		return fmt.Errorf("failed to create user: %w", errCreateUser)
+		return fmt.Errorf("userRepo.CreateUser: %w", errCreateUser)
 	}
 
 	return nil

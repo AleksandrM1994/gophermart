@@ -1,12 +1,13 @@
-package auth_handlers
+package user
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/gophermart/internal/handlers/auth_handlers/api"
-	"github.com/gophermart/internal/service/auth_services/dto"
+	custom_errs "github.com/gophermart/internal/errors"
+	"github.com/gophermart/internal/handlers/user/api"
+	"github.com/gophermart/internal/service/user/dto"
 )
 
 func (c *UserController) RegisterUserHandler(ctx *gin.Context) {
@@ -21,7 +22,7 @@ func (c *UserController) RegisterUserHandler(ctx *gin.Context) {
 		Password: req.Password,
 	})
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		custom_errs.RespondWithError(ctx, err)
 		return
 	}
 

@@ -1,4 +1,4 @@
-package order_services
+package order
 
 import (
 	"go.uber.org/zap"
