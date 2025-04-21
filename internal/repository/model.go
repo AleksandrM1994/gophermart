@@ -6,7 +6,7 @@ type User struct {
 	ID       string  `db:"id;primary_key"`
 	Login    string  `db:"login;not null;unique"`
 	Password string  `db:"password;not null"`
-	Balance  float64 `db:"balance"`
+	Balance  int     `db:"withdrawal"`
 	Session  Session `gorm:"foreignKey:UserID"`
 }
 

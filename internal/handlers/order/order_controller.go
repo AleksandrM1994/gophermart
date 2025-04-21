@@ -14,7 +14,6 @@ import (
 type OrderController struct {
 	lg           *zap.SugaredLogger
 	cfg          config.Config
-	repo         *repository.Repository
 	userService  *user.UserServiceImpl
 	orderService *order.OrderServiceImpl
 }

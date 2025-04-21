@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	custom_errs "github.com/gophermart/internal/errors"
 	"github.com/gophermart/internal/service/order/dto"
 )
 
@@ -12,6 +13,11 @@ func (s *OrderServiceImpl) GetOrders(ctx context.Context, req *dto.GetOrdersRequ
 	if err != nil {
 		return nil, fmt.Errorf("get orders: %w", err)
 	}
+
+	if len(res) == 0 {
+		return nil, custom_errs.ErrNoContent
+	}
+
 	var orders []*dto.Order
 	for _, order := range res {
 		orders = append(orders, &dto.Order{

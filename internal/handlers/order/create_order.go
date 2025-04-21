@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/gophermart/internal/errors"
 	custom_errs "github.com/gophermart/internal/errors"
 	"github.com/gophermart/internal/service/order/dto"
 )
@@ -13,7 +12,7 @@ import (
 func (c *OrderController) CreateOrder(ctx *gin.Context) {
 	value, ok := ctx.Get("user_id")
 	if !ok {
-		ctx.JSON(http.StatusUnauthorized, errors.ErrorResponse{
+		ctx.JSON(http.StatusUnauthorized, custom_errs.ErrorResponse{
 			Code:  http.StatusUnauthorized,
 			Error: "empty user id",
 		})
@@ -24,8 +23,8 @@ func (c *OrderController) CreateOrder(ctx *gin.Context) {
 
 	data, errGetRawData := ctx.GetRawData()
 	if errGetRawData != nil {
-		ctx.JSON(http.StatusUnauthorized, errors.ErrorResponse{
-			Code:  http.StatusUnauthorized,
+		ctx.JSON(http.StatusBadRequest, custom_errs.ErrorResponse{
+			Code:  http.StatusBadRequest,
 			Error: errGetRawData.Error(),
 		})
 		return
@@ -46,5 +45,4 @@ func (c *OrderController) CreateOrder(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusAccepted, nil)
-	return
 }

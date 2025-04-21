@@ -2,9 +2,12 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/lib/pq"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	custom_errs "github.com/gophermart/internal/errors"
 )
@@ -51,4 +54,27 @@ func (r *UserRepositoryImpl) GetUserByID(ctx context.Context, userID string) (*U
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 	return user, nil
+}
+
+func (r *UserRepositoryImpl) UpdateUserByID(ctx context.Context, userID string, updateFunc func(user *User) error) error {
+	err := r.db.Transaction(func(tx *gorm.DB) error {
+		var user User
+		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Take(&user, &User{ID: userID}).Error
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return fmt.Errorf("tx.Take: %w", err)
+		}
+		err = updateFunc(&user)
+		if err != nil {
+			return fmt.Errorf("updateFunc: %w", err)
+		}
+		err = tx.Save(&user).Error
+		if err != nil {
+			return fmt.Errorf("tx.Save: %w", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("failed to update user: %w", err)
+	}
+	return nil
 }

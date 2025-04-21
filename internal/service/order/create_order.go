@@ -3,8 +3,6 @@ package order
 import (
 	"context"
 	"fmt"
-	"strconv"
-	"strings"
 	"time"
 
 	custom_errs "github.com/gophermart/internal/errors"
@@ -19,19 +17,19 @@ func (s *OrderServiceImpl) CreateOrder(ctx context.Context, req *dto.CreateOrder
 		return nil, fmt.Errorf("validate: %w", errValidate)
 	}
 
-	if !LunaCheck(req.Order) {
+	if !service.LunaCheck(req.Order) {
 		return nil, fmt.Errorf("LunaCheck for order: %w", custom_errs.ErrWrongFormat)
 	}
 
-	order, errGetOrderById := s.orderRepo.GetOrderById(ctx, req.Order)
-	if errGetOrderById != nil {
-		return nil, fmt.Errorf("orderRepo.GetOrderById:%w", errGetOrderById)
+	order, errGetOrderByID := s.orderRepo.GetOrderByID(ctx, req.Order)
+	if errGetOrderByID != nil {
+		return nil, fmt.Errorf("orderRepo.GetOrderByID:%w", errGetOrderByID)
 	}
 
 	if order != nil {
 		if order.ID == req.Order && order.UserID == req.UserID {
 			return &dto.CreateOrderResponse{
-				&dto.Order{
+				Order: &dto.Order{
 					Number:     order.ID,
 					Status:     order.Status.ToString(),
 					Accrual:    order.Accrual,
@@ -53,33 +51,4 @@ func (s *OrderServiceImpl) CreateOrder(ctx context.Context, req *dto.CreateOrder
 		return nil, fmt.Errorf("create order: %w", err)
 	}
 	return nil, nil
-}
-
-func LunaCheck(number string) bool {
-	number = strings.ReplaceAll(number, " ", "")
-	if len(number) == 0 {
-		return false
-	}
-
-	sum := 0
-	shouldDouble := false
-
-	for i := len(number) - 1; i >= 0; i-- {
-		digit, err := strconv.Atoi(string(number[i]))
-		if err != nil {
-			return false
-		}
-
-		if shouldDouble {
-			digit *= 2
-			if digit > 9 {
-				digit -= 9
-			}
-		}
-
-		sum += digit
-		shouldDouble = !shouldDouble
-	}
-
-	return sum%10 == 0
 }

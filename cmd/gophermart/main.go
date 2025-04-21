@@ -8,6 +8,7 @@ import (
 	"github.com/gophermart/config"
 	"github.com/gophermart/internal/handlers/order"
 	"github.com/gophermart/internal/handlers/user"
+	"github.com/gophermart/internal/handlers/withdrawal"
 	"github.com/gophermart/internal/repository"
 )
 
@@ -39,6 +40,9 @@ func main() {
 
 	orderController := order.NewOrderController(lg, cfg, repo)
 	orderController.Register(g)
+
+	withdrawalController := withdrawal.NewWithdrawalController(lg, cfg, repo)
+	withdrawalController.Register(g)
 
 	err = g.Run(cfg.HTTPAddress)
 	if err != nil {

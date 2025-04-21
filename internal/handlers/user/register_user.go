@@ -13,7 +13,10 @@ import (
 func (c *UserController) RegisterUserHandler(ctx *gin.Context) {
 	var req *api.RegisterUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		ctx.JSON(http.StatusBadRequest, custom_errs.ErrorResponse{
+			Code:  http.StatusBadRequest,
+			Error: err.Error(),
+		})
 		return
 	}
 
@@ -26,5 +29,5 @@ func (c *UserController) RegisterUserHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, nil)
+	ctx.JSON(http.StatusOK, nil)
 }

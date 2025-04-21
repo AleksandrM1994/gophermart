@@ -1,4 +1,4 @@
-package order
+package withdrawal
 
 import (
 	"net/http"
@@ -6,10 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 
 	custom_errs "github.com/gophermart/internal/errors"
-	"github.com/gophermart/internal/service/order/dto"
+	"github.com/gophermart/internal/handlers/withdrawal/api"
+	"github.com/gophermart/internal/service/withdrawal/dto"
 )
 
-func (c *OrderController) GetOrders(ctx *gin.Context) {
+func (c *WithdrawalController) GetBalance(ctx *gin.Context) {
 	value, ok := ctx.Get("user_id")
 	if !ok {
 		ctx.JSON(http.StatusUnauthorized, custom_errs.ErrorResponse{
@@ -21,13 +22,14 @@ func (c *OrderController) GetOrders(ctx *gin.Context) {
 
 	userID := value.(string)
 
-	res, err := c.orderService.GetOrders(ctx, &dto.GetOrdersRequest{
-		UserID: userID,
-	})
+	res, err := c.withdrawalService.GetBalance(ctx, &dto.GetBalanceRequest{UserID: userID})
 	if err != nil {
 		custom_errs.RespondWithError(ctx, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, res)
+	ctx.JSON(http.StatusOK, &api.GetBalanceResponse{
+		Current:   res.Current,
+		Withdrawn: res.Withdrawn,
+	})
 }

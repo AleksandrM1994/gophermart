@@ -8,4 +8,5 @@ type UserRepository interface {
 	CreateUser(ctx context.Context, user *User, session *Session) error
 	GetSessionByLogPass(ctx context.Context, login, password string) (*Session, error)
 	GetUserByID(ctx context.Context, UserID string) (*User, error)
+	UpdateUserByID(ctx context.Context, userID string, updateFunc func(user *User) error) error
 }

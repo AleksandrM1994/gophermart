@@ -16,6 +16,7 @@ var ErrBadRequest = errors.New("bad request")
 var ErrResourceGone = errors.New("resource gone")
 var ErrDuplicateKey = errors.New("duplicate key")
 var ErrWrongFormat = errors.New("wrong format")
+var ErrNotFunds = errors.New("not enough funds")
 
 type ErrorResponse struct {
 	Code  int    `json:"code"`
@@ -47,6 +48,16 @@ func RespondWithError(ctx *gin.Context, err error) {
 	case errors.Is(err, ErrWrongFormat):
 		ctx.JSON(http.StatusUnprocessableEntity, ErrorResponse{
 			Code:  http.StatusUnprocessableEntity,
+			Error: err.Error(),
+		})
+	case errors.Is(err, ErrNoContent):
+		ctx.JSON(http.StatusNoContent, ErrorResponse{
+			Code:  http.StatusNoContent,
+			Error: err.Error(),
+		})
+	case errors.Is(err, ErrNotFunds):
+		ctx.JSON(http.StatusPaymentRequired, ErrorResponse{
+			Code:  http.StatusPaymentRequired,
 			Error: err.Error(),
 		})
 	default:

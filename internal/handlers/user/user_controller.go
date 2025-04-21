@@ -13,7 +13,6 @@ import (
 type UserController struct {
 	cfg     config.Config
 	lg      *zap.SugaredLogger
-	repo    *repository.Repository
 	service *user.UserServiceImpl
 }
 

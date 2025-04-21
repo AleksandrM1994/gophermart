@@ -14,7 +14,10 @@ import (
 func (c *UserController) AuthUserHandler(ctx *gin.Context) {
 	var req *api.AuthUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		ctx.JSON(http.StatusBadRequest, custom_errs.ErrorResponse{
+			Code:  http.StatusBadRequest,
+			Error: err.Error(),
+		})
 		return
 	}
 
