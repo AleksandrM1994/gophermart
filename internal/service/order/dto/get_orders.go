@@ -13,6 +13,6 @@ type GetOrdersResponse struct {
 type Order struct {
 	Number     string
 	Status     string
-	Accrual    int
+	Accrual    float32
 	UploadedAt time.Time
 }

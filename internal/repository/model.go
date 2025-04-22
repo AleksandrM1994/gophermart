@@ -6,7 +6,7 @@ type User struct {
 	ID       string  `db:"id;primary_key"`
 	Login    string  `db:"login;not null;unique"`
 	Password string  `db:"password;not null"`
-	Balance  int     `db:"withdrawal"`
+	Balance  float32 `db:"withdrawal"`
 	Session  Session `gorm:"foreignKey:UserID"`
 }
 
@@ -26,7 +26,7 @@ func (Session) TableName() string {
 
 type Order struct {
 	ID         string      `db:"id;primary_key"`
-	Accrual    int         `db:"accrual"`
+	Accrual    float32     `db:"accrual"`
 	Status     OrderStatus `gorm:"type:enum('UNKNOWN', 'REGISTERED', 'INVALID', 'PROCESSING', 'PROCESSED')"`
 	UploadedAt *time.Time  `db:"uploaded_at;not null"`
 	UserID     string      `db:"user_id;not null"`
@@ -38,7 +38,7 @@ func (Order) TableName() string {
 
 type Withdrawal struct {
 	OrderID     string     `db:"order_id;primary_key"`
-	Sum         int        `db:"sum"`
+	Sum         float32    `db:"sum"`
 	ProcessedAt *time.Time `db:"processed_at;not null"`
 	UserID      string     `db:"user_id;not null"`
 }

@@ -40,7 +40,7 @@ func (r *UserRepositoryImpl) CreateUser(ctx context.Context, user *User, session
 
 func (r *UserRepositoryImpl) GetUserByLogPass(ctx context.Context, login, password string) (*User, error) {
 	var user *User
-	err := r.db.WithContext(ctx).Model(&user).Where("login = ? and password = ?", login, password).Preload("Session").Find(&user).Error
+	err := r.db.WithContext(ctx).Model(&User{}).Where("login = ? and password = ?", login, password).Preload("Session").First(&user).Error
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}

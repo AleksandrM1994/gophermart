@@ -17,6 +17,7 @@ var ErrResourceGone = errors.New("resource gone")
 var ErrDuplicateKey = errors.New("duplicate key")
 var ErrWrongFormat = errors.New("wrong format")
 var ErrNotFunds = errors.New("not enough funds")
+var ErrManyRequests = errors.New("many requests")
 
 type ErrorResponse struct {
 	Code  int    `json:"code"`
@@ -58,6 +59,11 @@ func RespondWithError(ctx *gin.Context, err error) {
 	case errors.Is(err, ErrNotFunds):
 		ctx.JSON(http.StatusPaymentRequired, ErrorResponse{
 			Code:  http.StatusPaymentRequired,
+			Error: err.Error(),
+		})
+	case errors.Is(err, ErrManyRequests):
+		ctx.JSON(http.StatusTooManyRequests, ErrorResponse{
+			Code:  http.StatusTooManyRequests,
 			Error: err.Error(),
 		})
 	default:

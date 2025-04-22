@@ -8,6 +8,7 @@ import (
 	custom_errs "github.com/gophermart/internal/errors"
 	"github.com/gophermart/internal/repository"
 	"github.com/gophermart/internal/service"
+	accrual_dto "github.com/gophermart/internal/service/accrual/dto"
 	"github.com/gophermart/internal/service/order/dto"
 )
 
@@ -41,9 +42,17 @@ func (s *OrderServiceImpl) CreateOrder(ctx context.Context, req *dto.CreateOrder
 		}
 	}
 
+	res, errGetOrderInfo := s.accrualService.GetOrderInfo(ctx, &accrual_dto.GetOrderInfoRequest{
+		Order: req.Order,
+	})
+	if errGetOrderInfo != nil {
+		return nil, fmt.Errorf("accrualService.GetOrderInfo:%w", errGetOrderInfo)
+	}
+
 	err := s.orderRepo.CreateOrder(ctx, &repository.Order{
 		ID:         req.Order,
-		Status:     repository.OrderStatusUnknown,
+		Status:     repository.OrderStatus(res.Status),
+		Accrual:    res.Accrual,
 		UploadedAt: service.DatePtr(time.Now()),
 		UserID:     req.UserID,
 	})

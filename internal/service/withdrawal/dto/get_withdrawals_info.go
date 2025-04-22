@@ -12,6 +12,6 @@ type GetWithdrawalsInfoResponse struct {
 
 type Withdrawal struct {
 	Order       string
-	Sum         int
+	Sum         float32
 	ProcessedAt time.Time
 }

@@ -2,6 +2,6 @@ package dto
 
 type MakeWithdrawalRequest struct {
 	Order  string
-	Sum    int
+	Sum    float32
 	UserID string
 }

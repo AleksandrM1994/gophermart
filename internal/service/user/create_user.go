@@ -56,5 +56,6 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, req *dto.CreateUserReq
 	return &dto.CreateUserResponse{
 		Cookie:       cookie,
 		CookieFinish: cookieFinish,
+		UserID:       id,
 	}, nil
 }

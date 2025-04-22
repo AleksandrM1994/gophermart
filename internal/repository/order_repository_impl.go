@@ -2,7 +2,10 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
+
+	"gorm.io/gorm"
 )
 
 type OrderRepositoryImpl struct {
@@ -32,8 +35,11 @@ func (r *OrderRepositoryImpl) GetOrders(ctx context.Context, userID string) ([]*
 
 func (r *OrderRepositoryImpl) GetOrderByID(ctx context.Context, id string) (*Order, error) {
 	var order *Order
-	err := r.db.WithContext(ctx).Model(&Order{}).Where("id = ?", id).Find(&order).Error
+	err := r.db.WithContext(ctx).Model(&Order{}).Where("id = ?", id).First(&order).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, fmt.Errorf("get orders: %w", err)
 	}
 	return order, nil

@@ -34,5 +34,5 @@ func (s *UserServiceImpl) AuthUser(ctx context.Context, req *dto.AuthUserRequest
 		return nil, fmt.Errorf("user not found: %w", custom_errs.ErrUnauthorized)
 	}
 
-	return &dto.AuthUserResponse{Cookie: user.Session.Cookie, CookieFinish: user.Session.CookieFinish}, nil
+	return &dto.AuthUserResponse{Cookie: user.Session.Cookie, CookieFinish: user.Session.CookieFinish, UserID: user.ID}, nil
 }

@@ -15,6 +15,7 @@ type AuthUserRequest struct {
 type AuthUserResponse struct {
 	Cookie       string
 	CookieFinish *time.Time
+	UserID       string
 }
 
 func (r *AuthUserRequest) Validate() error {

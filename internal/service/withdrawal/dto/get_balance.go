@@ -5,6 +5,6 @@ type GetBalanceRequest struct {
 }
 
 type GetBalanceResponse struct {
-	Current   int
-	Withdrawn int
+	Current   float32
+	Withdrawn float32
 }

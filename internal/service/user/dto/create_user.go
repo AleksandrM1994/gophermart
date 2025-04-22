@@ -25,4 +25,5 @@ func (r *CreateUserRequest) Validate() error {
 type CreateUserResponse struct {
 	Cookie       string
 	CookieFinish *time.Time
+	UserID       string
 }

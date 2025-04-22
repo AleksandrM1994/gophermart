@@ -18,7 +18,7 @@ func (s *WithdrawalServiceImpl) GetBalance(ctx context.Context, req *dto.GetBala
 		return nil, fmt.Errorf("withdrawalRepo.GetWithdrawalByUserID: %w", errGetWithdrawalByUserID)
 	}
 
-	var withdrawalSum int
+	var withdrawalSum float32
 	for _, withdrawal := range withdrawals {
 		withdrawalSum += withdrawal.Sum
 	}
