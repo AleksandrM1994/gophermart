@@ -1,6 +1,9 @@
 package main
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
@@ -44,7 +47,14 @@ func main() {
 	withdrawalController := withdrawal.NewWithdrawalController(lg, cfg, repo)
 	withdrawalController.Register(g)
 
-	err = g.Run(cfg.HTTPAddress)
+	server := &http.Server{
+		Addr:         cfg.HTTPAddress,
+		Handler:      g,
+		ReadTimeout:  time.Minute,
+		WriteTimeout: time.Minute,
+	}
+
+	err = server.ListenAndServe()
 	if err != nil {
 		lg.Fatalf("g.Run, %w", err)
 	}

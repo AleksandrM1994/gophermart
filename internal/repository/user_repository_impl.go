@@ -31,7 +31,7 @@ func (r *UserRepositoryImpl) CreateUser(ctx context.Context, user *User, session
 		return fmt.Errorf("failed to create user: %w", err)
 	}
 
-	err = r.db.Create(session).Error
+	err = r.db.WithContext(ctx).Create(session).Error
 	if err != nil {
 		return fmt.Errorf("failed to create session: %w", err)
 	}
@@ -40,7 +40,7 @@ func (r *UserRepositoryImpl) CreateUser(ctx context.Context, user *User, session
 
 func (r *UserRepositoryImpl) GetUserByLogPass(ctx context.Context, login, password string) (*User, error) {
 	var user *User
-	err := r.db.Model(&user).Where("login = ? and password = ?", login, password).Preload("Session").Find(&user).Error
+	err := r.db.WithContext(ctx).Model(&user).Where("login = ? and password = ?", login, password).Preload("Session").Find(&user).Error
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
@@ -49,7 +49,7 @@ func (r *UserRepositoryImpl) GetUserByLogPass(ctx context.Context, login, passwo
 
 func (r *UserRepositoryImpl) GetUserByID(ctx context.Context, userID string) (*User, error) {
 	var user *User
-	err := r.db.Model(&user).Where("id = ?", userID).Preload("Session").Find(&user).Error
+	err := r.db.WithContext(ctx).Model(&user).Where("id = ?", userID).Preload("Session").Find(&user).Error
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
@@ -57,7 +57,7 @@ func (r *UserRepositoryImpl) GetUserByID(ctx context.Context, userID string) (*U
 }
 
 func (r *UserRepositoryImpl) UpdateUserByID(ctx context.Context, userID string, updateFunc func(user *User) error) error {
-	err := r.db.Transaction(func(tx *gorm.DB) error {
+	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var user User
 		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Take(&user, &User{ID: userID}).Error
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {

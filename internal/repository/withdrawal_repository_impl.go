@@ -14,7 +14,7 @@ func NewWithdrawalRepository(repository *Repository) *WithdrawalRepositoryImpl {
 }
 
 func (r *WithdrawalRepositoryImpl) CreateWithdrawal(ctx context.Context, withdrawal *Withdrawal) error {
-	err := r.db.Create(&withdrawal).Error
+	err := r.db.WithContext(ctx).Create(&withdrawal).Error
 	if err != nil {
 		return fmt.Errorf("db.Create: %w", err)
 	}
@@ -23,7 +23,7 @@ func (r *WithdrawalRepositoryImpl) CreateWithdrawal(ctx context.Context, withdra
 
 func (r *WithdrawalRepositoryImpl) GetWithdrawalByUserID(ctx context.Context, userID string) ([]*Withdrawal, error) {
 	var withdrawals []*Withdrawal
-	err := r.db.Where("user_id = ?", userID).Find(&withdrawals).Error
+	err := r.db.WithContext(ctx).Where("user_id = ?", userID).Find(&withdrawals).Error
 	if err != nil {
 		return nil, fmt.Errorf("db.Find: %w", err)
 	}

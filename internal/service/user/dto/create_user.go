@@ -2,6 +2,7 @@ package dto
 
 import (
 	"fmt"
+	"time"
 
 	custom_errs "github.com/gophermart/internal/errors"
 )
@@ -19,4 +20,9 @@ func (r *CreateUserRequest) Validate() error {
 		return fmt.Errorf("invalid password:%w", custom_errs.ErrValidate)
 	}
 	return nil
+}
+
+type CreateUserResponse struct {
+	Cookie       string
+	CookieFinish *time.Time
 }

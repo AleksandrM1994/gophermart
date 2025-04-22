@@ -2,6 +2,7 @@ package user
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -20,7 +21,7 @@ func (c *UserController) RegisterUserHandler(ctx *gin.Context) {
 		return
 	}
 
-	err := c.service.CreateUser(ctx, &dto.CreateUserRequest{
+	res, err := c.service.CreateUser(ctx, &dto.CreateUserRequest{
 		Login:    req.Login,
 		Password: req.Password,
 	})
@@ -28,6 +29,16 @@ func (c *UserController) RegisterUserHandler(ctx *gin.Context) {
 		custom_errs.RespondWithError(ctx, err)
 		return
 	}
+
+	ctx.SetCookie(
+		c.cfg.AuthUserCookieName,
+		res.Cookie,
+		int(time.Until(*res.CookieFinish).Seconds()),
+		"/",
+		"",
+		true,
+		true,
+	)
 
 	ctx.JSON(http.StatusOK, nil)
 }
