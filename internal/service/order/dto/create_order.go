@@ -2,6 +2,7 @@ package dto
 
 import (
 	"fmt"
+	"time"
 
 	custom_errs "github.com/gophermart/internal/errors"
 )
@@ -23,4 +24,11 @@ func (r CreateOrderRequest) Validate() error {
 
 type CreateOrderResponse struct {
 	Order *Order
+}
+
+type Order struct {
+	Number     string
+	Status     string
+	Accrual    float32
+	UploadedAt time.Time
 }

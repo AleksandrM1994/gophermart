@@ -35,6 +35,7 @@ func (c *OrderController) CreateOrder(ctx *gin.Context) {
 		UserID: userID,
 	})
 	if errCreateOrder != nil {
+		c.lg.Infow("CREATE ORDER ERROR", "create_order_error", errCreateOrder)
 		custom_errs.RespondWithError(ctx, errCreateOrder)
 		return
 	}

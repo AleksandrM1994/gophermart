@@ -27,24 +27,24 @@ func main() {
 		}
 	}()
 
-	lg := logger.Sugar()
+	lg := *logger.Sugar()
 
 	cfg := config.Init()
 
 	g := gin.Default()
 
-	repo, err := repository.NewRepository(cfg, lg)
+	repo, err := repository.NewRepository(cfg, &lg)
 	if err != nil {
 		lg.Fatalf("repository.NewRepository, %w", err)
 	}
 
-	userController := user.NewUserController(cfg, lg, repo)
+	userController := user.NewUserController(cfg, &lg, repo)
 	userController.RegisterRoutes(g)
 
-	orderController := order.NewOrderController(lg, cfg, repo)
+	orderController := order.NewOrderController(&lg, cfg, repo)
 	orderController.Register(g)
 
-	withdrawalController := withdrawal.NewWithdrawalController(lg, cfg, repo)
+	withdrawalController := withdrawal.NewWithdrawalController(&lg, cfg, repo)
 	withdrawalController.Register(g)
 
 	server := &http.Server{

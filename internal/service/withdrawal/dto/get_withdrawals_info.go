@@ -7,11 +7,7 @@ type GetWithdrawalsInfoRequest struct {
 }
 
 type GetWithdrawalsInfoResponse struct {
-	withdrawals []*Withdrawal
-}
-
-type Withdrawal struct {
-	Order       string
+	OrderID     string
 	Sum         float32
 	ProcessedAt time.Time
 }

@@ -3,7 +3,7 @@ package repository
 type OrderStatus string
 
 const (
-	OrderStatusUnknown    OrderStatus = "UNKNOWN"
+	OrderStatusNew        OrderStatus = "NEW"
 	OrderStatusRegistered OrderStatus = "REGISTERED"
 	OrderStatusInvalid    OrderStatus = "INVALID"
 	OrderStatusProcessing OrderStatus = "PROCESSING"

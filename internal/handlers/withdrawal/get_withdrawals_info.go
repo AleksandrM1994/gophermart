@@ -31,8 +31,8 @@ func (c *WithdrawalController) GetWithdrawalsInfo(ctx *gin.Context) {
 		return
 	}
 
-	var res *api.GetWithdrawalsInfoResponse
-	errCopy := copier.Copy(&res, withdrawals)
+	res := make([]*api.GetWithdrawalsInfoResponse, 0)
+	errCopy := copier.Copy(&res, &withdrawals)
 	if errCopy != nil {
 		ctx.JSON(http.StatusInternalServerError, custom_errs.ErrorResponse{
 			Code:  http.StatusInternalServerError,
@@ -41,5 +41,7 @@ func (c *WithdrawalController) GetWithdrawalsInfo(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, withdrawals)
+	c.lg.Infow("GET WITHDRAWALS INFO RESPONSE", "get_withdrawals_info_response", res)
+
+	ctx.JSON(http.StatusOK, res)
 }

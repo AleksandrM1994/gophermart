@@ -8,7 +8,9 @@ import (
 	"github.com/gophermart/internal/service/order/dto"
 )
 
-func (s *OrderServiceImpl) GetOrders(ctx context.Context, req *dto.GetOrdersRequest) (*dto.GetOrdersResponse, error) {
+func (s *OrderServiceImpl) GetOrders(ctx context.Context, req *dto.GetOrdersRequest) ([]*dto.GetOrdersResponse, error) {
+	s.lg.Infow("GET ORDERS REQUEST", "get_orders_request", req)
+
 	res, err := s.orderRepo.GetOrders(ctx, req.UserID)
 	if err != nil {
 		return nil, fmt.Errorf("get orders: %w", err)
@@ -18,14 +20,14 @@ func (s *OrderServiceImpl) GetOrders(ctx context.Context, req *dto.GetOrdersRequ
 		return nil, custom_errs.ErrNoContent
 	}
 
-	var orders []*dto.Order
+	var orders []*dto.GetOrdersResponse
 	for _, order := range res {
-		orders = append(orders, &dto.Order{
+		orders = append(orders, &dto.GetOrdersResponse{
 			Number:     order.ID,
 			Status:     order.Status.ToString(),
 			Accrual:    order.Accrual,
 			UploadedAt: *order.UploadedAt,
 		})
 	}
-	return &dto.GetOrdersResponse{Orders: orders}, nil
+	return orders, nil
 }

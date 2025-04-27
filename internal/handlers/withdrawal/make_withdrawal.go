@@ -37,6 +37,7 @@ func (c *WithdrawalController) MakeWithdrawal(ctx *gin.Context) {
 		UserID: userID,
 	})
 	if err != nil {
+		c.lg.Errorw("Make Withdrawal Error", "make_withdrawal_error", err)
 		custom_errs.RespondWithError(ctx, err)
 		return
 	}

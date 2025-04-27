@@ -27,7 +27,7 @@ func (Session) TableName() string {
 type Order struct {
 	ID         string      `db:"id;primary_key"`
 	Accrual    float32     `db:"accrual"`
-	Status     OrderStatus `gorm:"type:enum('UNKNOWN', 'REGISTERED', 'INVALID', 'PROCESSING', 'PROCESSED')"`
+	Status     OrderStatus `gorm:"type:enum('NEW', 'REGISTERED', 'INVALID', 'PROCESSING', 'PROCESSED')"`
 	UploadedAt *time.Time  `db:"uploaded_at;not null"`
 	UserID     string      `db:"user_id;not null"`
 }

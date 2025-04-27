@@ -1,13 +1,13 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE
-TYPE order_status_type AS ENUM ('UNKNOWN', 'REGISTRED', 'INVALID', 'PROCESSING', 'PROCESSED');
+TYPE order_status_type AS ENUM ('NEW', 'REGISTRED', 'INVALID', 'PROCESSING', 'PROCESSED');
 
 create table if not exists orders
 (
     id          varchar(50) primary key,
     accrual     numeric(12, 2),
-    status order_status_type default 'UNKNOWN',
+    status order_status_type default 'NEW',
     uploaded_at TIMESTAMP   not null,
     user_id     varchar(50) not null,
     UNIQUE (id, user_id)

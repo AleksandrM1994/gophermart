@@ -36,7 +36,7 @@ func (c *UserController) RegisterUserHandler(ctx *gin.Context) {
 		int(time.Until(*res.CookieFinish).Seconds()),
 		"/",
 		"",
-		true,
+		false,
 		true,
 	)
 

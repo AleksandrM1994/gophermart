@@ -9,12 +9,15 @@ import (
 	"time"
 
 	custom_errs "github.com/gophermart/internal/errors"
+	"github.com/gophermart/internal/repository"
 	"github.com/gophermart/internal/service/accrual/dto"
 )
 
 func (s *AccrualServiceImpl) GetOrderInfo(ctx context.Context, req *dto.GetOrderInfoRequest) (*dto.GetOrderInfoResponse, error) {
+	s.lg.Infow("ACCRUAL GET ORDER INFO REQUEST", "get_orders_info_request", req)
+
 	uri := fmt.Sprintf("/api/orders/%s", req.Order)
-	url := "http://" + s.cfg.AccrualSystemAddress + uri
+	url := s.cfg.AccrualSystemAddress + uri
 
 	client := &http.Client{
 		Timeout: 30 * time.Second,
@@ -31,6 +34,8 @@ func (s *AccrualServiceImpl) GetOrderInfo(ctx context.Context, req *dto.GetOrder
 	}
 	defer resp.Body.Close()
 
+	s.lg.Infow("ACCRUAL GET ORDER INFO RESPONSE", "get_orders_info_status_code", resp.StatusCode, "get_orders_info_body", resp.Body)
+
 	switch resp.StatusCode {
 	case http.StatusOK:
 		var res *dto.GetOrderInfoResponse
@@ -40,7 +45,10 @@ func (s *AccrualServiceImpl) GetOrderInfo(ctx context.Context, req *dto.GetOrder
 		s.lg.Infow("get order info", "response", res)
 		return res, nil
 	case http.StatusNoContent:
-		return nil, custom_errs.ErrNoContent
+		return &dto.GetOrderInfoResponse{
+			Order:  req.Order,
+			Status: repository.OrderStatusNew.ToString(),
+		}, nil
 	case http.StatusTooManyRequests:
 		return nil, custom_errs.ErrManyRequests
 	case http.StatusInternalServerError:

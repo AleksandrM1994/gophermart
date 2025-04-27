@@ -34,7 +34,7 @@ func (r *OrderRepositoryImpl) GetOrders(ctx context.Context, userID string) ([]*
 }
 
 func (r *OrderRepositoryImpl) GetOrderByID(ctx context.Context, id string) (*Order, error) {
-	var order *Order
+	var order Order
 	err := r.db.WithContext(ctx).Model(&Order{}).Where("id = ?", id).First(&order).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -42,5 +42,5 @@ func (r *OrderRepositoryImpl) GetOrderByID(ctx context.Context, id string) (*Ord
 		}
 		return nil, fmt.Errorf("get orders: %w", err)
 	}
-	return order, nil
+	return &order, nil
 }

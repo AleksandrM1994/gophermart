@@ -4,8 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/copier"
 
 	custom_errs "github.com/gophermart/internal/errors"
+	"github.com/gophermart/internal/handlers/order/api"
 	"github.com/gophermart/internal/service/order/dto"
 )
 
@@ -25,9 +27,22 @@ func (c *OrderController) GetOrders(ctx *gin.Context) {
 		UserID: userID,
 	})
 	if err != nil {
+		c.lg.Errorw("GET ORDERS ERROR", "get_orders_error", err)
 		custom_errs.RespondWithError(ctx, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, res)
+	response := make([]*api.GetOrdersResponse, 0)
+	errCopy := copier.Copy(&response, &res)
+	if errCopy != nil {
+		ctx.JSON(http.StatusInternalServerError, custom_errs.ErrorResponse{
+			Code:  http.StatusInternalServerError,
+			Error: errCopy.Error(),
+		})
+		return
+	}
+
+	c.lg.Infow("GET ORDERS RESPONSE", "get_orders_response", response)
+
+	ctx.JSON(http.StatusOK, response)
 }

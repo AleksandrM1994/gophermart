@@ -7,10 +7,6 @@ type GetOrdersRequest struct {
 }
 
 type GetOrdersResponse struct {
-	Orders []*Order
-}
-
-type Order struct {
 	Number     string
 	Status     string
 	Accrual    float32

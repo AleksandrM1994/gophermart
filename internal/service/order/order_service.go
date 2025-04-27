@@ -8,5 +8,5 @@ import (
 
 type OrderService interface {
 	CreateOrder(ctx context.Context, req *dto.CreateOrderRequest) (*dto.CreateOrderResponse, error)
-	GetOrders(ctx context.Context, req *dto.GetOrdersRequest) (*dto.GetOrdersResponse, error)
+	GetOrders(ctx context.Context, req *dto.GetOrdersRequest) ([]*dto.GetOrdersResponse, error)
 }

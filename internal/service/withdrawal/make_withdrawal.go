@@ -3,6 +3,7 @@ package withdrawal
 import (
 	"context"
 	"fmt"
+	"time"
 
 	custom_errs "github.com/gophermart/internal/errors"
 	"github.com/gophermart/internal/repository"
@@ -11,6 +12,8 @@ import (
 )
 
 func (s *WithdrawalServiceImpl) MakeWithdrawal(ctx context.Context, req *dto.MakeWithdrawalRequest) error {
+	s.lg.Infow("MAKE WITHDRAWALS REQUEST", "make_withdrawals_request", req)
+
 	if !service.LunaCheck(req.Order) {
 		return fmt.Errorf("LunaCheck for order: %w", custom_errs.ErrWrongFormat)
 	}
@@ -25,9 +28,10 @@ func (s *WithdrawalServiceImpl) MakeWithdrawal(ctx context.Context, req *dto.Mak
 	}
 
 	err := s.withdrawalRepo.CreateWithdrawal(ctx, &repository.Withdrawal{
-		OrderID: req.Order,
-		Sum:     req.Sum,
-		UserID:  req.UserID,
+		OrderID:     req.Order,
+		Sum:         req.Sum,
+		ProcessedAt: service.DatePtr(time.Now()),
+		UserID:      req.UserID,
 	})
 	if err != nil {
 		return fmt.Errorf("withdrawalRepo.CreateWithdrawal: %w", err)

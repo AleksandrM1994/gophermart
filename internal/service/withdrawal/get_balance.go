@@ -8,6 +8,8 @@ import (
 )
 
 func (s *WithdrawalServiceImpl) GetBalance(ctx context.Context, req *dto.GetBalanceRequest) (*dto.GetBalanceResponse, error) {
+	s.lg.Infow("GET BALANCE REQUEST", "get_balance_request", req)
+
 	user, errGetUserByID := s.userRepo.GetUserByID(ctx, req.UserID)
 	if errGetUserByID != nil {
 		return nil, fmt.Errorf("userRepo.GetUserByID: %w", errGetUserByID)

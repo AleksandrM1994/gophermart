@@ -13,6 +13,8 @@ import (
 )
 
 func (s *OrderServiceImpl) CreateOrder(ctx context.Context, req *dto.CreateOrderRequest) (*dto.CreateOrderResponse, error) {
+	s.lg.Infow("CREATE ORDER REQUEST", "create_order_request", req)
+
 	errValidate := req.Validate()
 	if errValidate != nil {
 		return nil, fmt.Errorf("validate: %w", errValidate)
@@ -59,5 +61,16 @@ func (s *OrderServiceImpl) CreateOrder(ctx context.Context, req *dto.CreateOrder
 	if err != nil {
 		return nil, fmt.Errorf("create order: %w", err)
 	}
+
+	if res.Status == repository.OrderStatusProcessed.ToString() {
+		errUpdateUserByID := s.userRepository.UpdateUserByID(ctx, req.UserID, func(currentUser *repository.User) error {
+			currentUser.Balance += res.Accrual
+			return nil
+		})
+		if errUpdateUserByID != nil {
+			return nil, fmt.Errorf("userRepository.UpdateUserByID:%w", errUpdateUserByID)
+		}
+	}
+
 	return nil, nil
 }
