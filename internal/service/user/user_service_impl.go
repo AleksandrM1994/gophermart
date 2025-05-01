@@ -11,13 +11,12 @@ import (
 type UserServiceImpl struct {
 	lg       *zap.SugaredLogger
 	cfg      config.Config
-	userRepo *repository.UserRepositoryImpl
+	userRepo repository.UserRepository
 	cookie   *securecookie.SecureCookie
 }
 
-func NewUserService(lg *zap.SugaredLogger, cfg config.Config, repo *repository.Repository) *UserServiceImpl {
-	srv := &UserServiceImpl{lg: lg, cfg: cfg}
-	srv.userRepo = repository.NewUserRepository(repo)
+func NewService(lg *zap.SugaredLogger, cfg config.Config, userRepo repository.UserRepository) *UserServiceImpl {
+	srv := &UserServiceImpl{lg: lg, cfg: cfg, userRepo: userRepo}
 	srv.cookie = newSecureCookie()
 	return srv
 }

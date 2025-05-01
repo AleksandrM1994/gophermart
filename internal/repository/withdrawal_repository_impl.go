@@ -9,7 +9,7 @@ type WithdrawalRepositoryImpl struct {
 	*Repository
 }
 
-func NewWithdrawalRepository(repository *Repository) *WithdrawalRepositoryImpl {
+func NewWithdrawalRepository(repository *Repository) WithdrawalRepository {
 	return &WithdrawalRepositoryImpl{repository}
 }
 

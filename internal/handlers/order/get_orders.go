@@ -2,14 +2,21 @@ package order
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 
 	custom_errs "github.com/gophermart/internal/errors"
-	"github.com/gophermart/internal/handlers/order/api"
 	"github.com/gophermart/internal/service/order/dto"
 )
+
+type GetOrdersResponse struct {
+	Number     string    `json:"number"`
+	Status     string    `json:"status"`
+	Accrual    float32   `json:"accrual"`
+	UploadedAt time.Time `json:"uploaded_at"`
+}
 
 func (c *OrderController) GetOrders(ctx *gin.Context) {
 	value, ok := ctx.Get("user_id")
@@ -32,7 +39,7 @@ func (c *OrderController) GetOrders(ctx *gin.Context) {
 		return
 	}
 
-	response := make([]*api.GetOrdersResponse, 0)
+	response := make([]*GetOrdersResponse, 0)
 	errCopy := copier.Copy(&response, &res)
 	if errCopy != nil {
 		ctx.JSON(http.StatusInternalServerError, custom_errs.ErrorResponse{

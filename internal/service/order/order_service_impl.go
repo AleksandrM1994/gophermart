@@ -11,18 +11,23 @@ import (
 type OrderServiceImpl struct {
 	lg             *zap.SugaredLogger
 	cfg            config.Config
-	userRepository *repository.UserRepositoryImpl
-	orderRepo      *repository.OrderRepositoryImpl
-	accrualService *accrual.AccrualServiceImpl
+	userRepository repository.UserRepository
+	orderRepo      repository.OrderRepository
+	accrualService accrual.AccrualService
 }
 
-func NewOrderService(lg *zap.SugaredLogger, cfg config.Config, repo *repository.Repository) *OrderServiceImpl {
-	service := &OrderServiceImpl{
-		lg:  lg,
-		cfg: cfg,
+func NewService(
+	lg *zap.SugaredLogger,
+	cfg config.Config,
+	userRepository repository.UserRepository,
+	orderRepo repository.OrderRepository,
+	accrualService accrual.AccrualService,
+) *OrderServiceImpl {
+	return &OrderServiceImpl{
+		lg:             lg,
+		cfg:            cfg,
+		userRepository: userRepository,
+		orderRepo:      orderRepo,
+		accrualService: accrualService,
 	}
-	service.userRepository = repository.NewUserRepository(repo)
-	service.orderRepo = repository.NewOrderRepository(repo)
-	service.accrualService = accrual.NewAccrualService(lg, cfg)
-	return service
 }

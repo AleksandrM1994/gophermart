@@ -7,12 +7,16 @@ import (
 	"github.com/gin-gonic/gin"
 
 	custom_errs "github.com/gophermart/internal/errors"
-	"github.com/gophermart/internal/handlers/user/api"
 	"github.com/gophermart/internal/service/user/dto"
 )
 
+type AuthUserRequest struct {
+	Login    string `json:"login"`
+	Password string `json:"password"`
+}
+
 func (c *UserController) AuthUserHandler(ctx *gin.Context) {
-	var req *api.AuthUserRequest
+	var req *AuthUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, custom_errs.ErrorResponse{
 			Code:  http.StatusBadRequest,

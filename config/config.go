@@ -1,49 +1,21 @@
 package config
 
 import (
-	"flag"
-	"os"
+	"github.com/caarlos0/env/v6"
 )
 
-type Config struct {
-	HTTPAddress          string
-	AccrualSystemAddress string
-	FileStoragePath      string
-	DSN                  string
-	HashSecret           string
-	AuthUserCookieName   string
+func NewConfig() (Config, error) {
+	var cfg Config
+	if err := env.Parse(&cfg); err != nil {
+		return cfg, err
+	}
+	return cfg, nil
 }
 
-var cfg Config
-
-func Init() Config {
-	flag.StringVar(&cfg.HTTPAddress, "a", ":8080", "HTTP run address")
-	flag.StringVar(&cfg.AccrualSystemAddress, "r", "http://localhost:8081", "accrual run url")
-	flag.StringVar(&cfg.DSN, "d", "user=postgres password=postgres dbname=praktikum host=postgres port=5432 sslmode=disable", "db connection")
-	flag.StringVar(&cfg.HashSecret, "h", "my_secret", "hash secret")
-	flag.StringVar(&cfg.AuthUserCookieName, "c", "Authorization", "auth cookie name")
-
-	flag.Parse()
-
-	if httpAddress := os.Getenv("RUN_ADDRESS"); httpAddress != "" {
-		cfg.HTTPAddress = httpAddress
-	}
-
-	if accrualSystemAddress := os.Getenv("ACCRUAL_SYSTEM_ADDRESS"); accrualSystemAddress != "" {
-		cfg.AccrualSystemAddress = accrualSystemAddress
-	}
-
-	if dsn := os.Getenv("DSN"); dsn != "" {
-		cfg.DSN = dsn
-	}
-
-	if hashSecret := os.Getenv("HASH_SECRET"); hashSecret != "" {
-		cfg.HashSecret = hashSecret
-	}
-
-	if authUserCookieName := os.Getenv("AUTH_USER_COOKIE_NAME"); authUserCookieName != "" {
-		cfg.AuthUserCookieName = authUserCookieName
-	}
-
-	return cfg
+type Config struct {
+	HTTPAddress          string `env:"RUN_ADDRESS" envDefault:":8080"`
+	AccrualSystemAddress string `env:"ACCRUAL_SYSTEM_ADDRESS" envDefault:"http://localhost:8081"`
+	DSN                  string `env:"DATABASE_URI" envDefault:"user=postgres password=postgres dbname=praktikum host=localhost port=5432 sslmode=disable"`
+	HashSecret           string `env:"HASH_SECRET" envDefault:"my_secret"`
+	AuthUserCookieName   string `env:"AUTH_USER_COOKIE_NAME" envDefault:"Authorization"`
 }

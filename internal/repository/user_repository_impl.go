@@ -16,7 +16,7 @@ type UserRepositoryImpl struct {
 	*Repository
 }
 
-func NewUserRepository(repo *Repository) *UserRepositoryImpl {
+func NewUserRepository(repo *Repository) UserRepository {
 	return &UserRepositoryImpl{repo}
 }
 

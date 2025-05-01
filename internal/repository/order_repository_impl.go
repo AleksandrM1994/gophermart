@@ -12,7 +12,7 @@ type OrderRepositoryImpl struct {
 	*Repository
 }
 
-func NewOrderRepository(repo *Repository) *OrderRepositoryImpl {
+func NewOrderRepository(repo *Repository) OrderRepository {
 	return &OrderRepositoryImpl{repo}
 }
 

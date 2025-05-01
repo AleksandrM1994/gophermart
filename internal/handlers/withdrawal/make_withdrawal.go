@@ -6,9 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 
 	custom_errs "github.com/gophermart/internal/errors"
-	"github.com/gophermart/internal/handlers/withdrawal/api"
 	"github.com/gophermart/internal/service/withdrawal/dto"
 )
+
+type MakeWithdrawalRequest struct {
+	Order string  `json:"order"`
+	Sum   float32 `json:"sum"`
+}
 
 func (c *WithdrawalController) MakeWithdrawal(ctx *gin.Context) {
 	value, ok := ctx.Get("user_id")
@@ -22,7 +26,7 @@ func (c *WithdrawalController) MakeWithdrawal(ctx *gin.Context) {
 
 	userID := value.(string)
 
-	var req *api.MakeWithdrawalRequest
+	var req *MakeWithdrawalRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, custom_errs.ErrorResponse{
 			Code:  http.StatusBadRequest,

@@ -3,8 +3,9 @@ module github.com/gophermart
 go 1.23.7
 
 require (
+	github.com/caarlos0/env/v6 v6.10.1
 	github.com/gin-gonic/gin v1.10.0
-	github.com/go-faster/errors v0.7.1
+	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/securecookie v1.1.2
 	github.com/jinzhu/copier v0.4.0

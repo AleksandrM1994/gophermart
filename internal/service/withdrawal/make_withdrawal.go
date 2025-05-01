@@ -27,10 +27,20 @@ func (s *WithdrawalServiceImpl) MakeWithdrawal(ctx context.Context, req *dto.Mak
 		return custom_errs.ErrNotFunds
 	}
 
+	mosLoc, errLoadLocation := time.LoadLocation("Europe/Moscow")
+	if errLoadLocation != nil {
+		return fmt.Errorf("time.LoadLocation:%w", errLoadLocation)
+	}
+	processedAtString := time.Now().In(mosLoc).Format(time.RFC3339)
+	processedAt, errTimeParse := time.Parse(time.RFC3339, processedAtString)
+	if errTimeParse != nil {
+		return fmt.Errorf("time.Parse:%w", errTimeParse)
+	}
+
 	err := s.withdrawalRepo.CreateWithdrawal(ctx, &repository.Withdrawal{
 		OrderID:     req.Order,
 		Sum:         req.Sum,
-		ProcessedAt: service.DatePtr(time.Now()),
+		ProcessedAt: service.DatePtr(processedAt),
 		UserID:      req.UserID,
 	})
 	if err != nil {

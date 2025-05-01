@@ -5,8 +5,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/gophermart/config"
-	"github.com/gophermart/internal/handlers/middlewares"
-	"github.com/gophermart/internal/repository"
+	"github.com/gophermart/internal/middlewares"
 	"github.com/gophermart/internal/service/order"
 	"github.com/gophermart/internal/service/user"
 )
@@ -18,17 +17,21 @@ type OrderController struct {
 	orderService *order.OrderServiceImpl
 }
 
-func NewOrderController(lg *zap.SugaredLogger, cfg config.Config, repo *repository.Repository) *OrderController {
-	controller := &OrderController{
-		lg:  lg,
-		cfg: cfg,
+func NewOrderController(
+	lg *zap.SugaredLogger,
+	cfg config.Config,
+	userService *user.UserServiceImpl,
+	orderService *order.OrderServiceImpl,
+) *OrderController {
+	return &OrderController{
+		lg:           lg,
+		cfg:          cfg,
+		userService:  userService,
+		orderService: orderService,
 	}
-	controller.userService = user.NewUserService(lg, cfg, repo)
-	controller.orderService = order.NewOrderService(lg, cfg, repo)
-	return controller
 }
 
-func (c *OrderController) Register(r *gin.Engine) {
+func (c *OrderController) RegisterRoutes(r *gin.Engine) {
 	orderGroup := r.Group("/api/user").Use(middlewares.Authorizer(c.lg, c.cfg, c.userService))
 	orderGroup.POST("/orders", c.CreateOrder)
 	orderGroup.GET("/orders", c.GetOrders)

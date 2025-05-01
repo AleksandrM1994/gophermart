@@ -11,7 +11,7 @@ type AccrualServiceImpl struct {
 	cfg config.Config
 }
 
-func NewAccrualService(lg *zap.SugaredLogger, cfg config.Config) *AccrualServiceImpl {
+func NewAccrualService(lg *zap.SugaredLogger, cfg config.Config) AccrualService {
 	return &AccrualServiceImpl{
 		lg:  lg,
 		cfg: cfg,

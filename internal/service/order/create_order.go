@@ -51,11 +51,21 @@ func (s *OrderServiceImpl) CreateOrder(ctx context.Context, req *dto.CreateOrder
 		return nil, fmt.Errorf("accrualService.GetOrderInfo:%w", errGetOrderInfo)
 	}
 
+	mosLoc, errLoadLocation := time.LoadLocation("Europe/Moscow")
+	if errLoadLocation != nil {
+		return nil, fmt.Errorf("time.LoadLocation:%w", errLoadLocation)
+	}
+	uploadAtString := time.Now().In(mosLoc).Format(time.RFC3339)
+	uploadAt, errTimeParse := time.Parse(time.RFC3339, uploadAtString)
+	if errTimeParse != nil {
+		return nil, fmt.Errorf("time.Parse:%w", errTimeParse)
+	}
+
 	err := s.orderRepo.CreateOrder(ctx, &repository.Order{
 		ID:         req.Order,
 		Status:     repository.OrderStatus(res.Status),
 		Accrual:    res.Accrual,
-		UploadedAt: service.DatePtr(time.Now()),
+		UploadedAt: service.DatePtr(uploadAt),
 		UserID:     req.UserID,
 	})
 	if err != nil {

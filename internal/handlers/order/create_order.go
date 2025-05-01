@@ -9,6 +9,12 @@ import (
 	"github.com/gophermart/internal/service/order/dto"
 )
 
+type CreateOrderResponse struct {
+	Order   string  `json:"order"`
+	Status  string  `json:"status"`
+	Accrual float32 `json:"accrual"`
+}
+
 func (c *OrderController) CreateOrder(ctx *gin.Context) {
 	value, ok := ctx.Get("user_id")
 	if !ok {

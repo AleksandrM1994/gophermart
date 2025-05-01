@@ -6,9 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 
 	custom_errs "github.com/gophermart/internal/errors"
-	"github.com/gophermart/internal/handlers/withdrawal/api"
 	"github.com/gophermart/internal/service/withdrawal/dto"
 )
+
+type GetBalanceResponse struct {
+	Current   float32 `json:"current"`
+	Withdrawn float32 `json:"withdrawn"`
+}
 
 func (c *WithdrawalController) GetBalance(ctx *gin.Context) {
 	value, ok := ctx.Get("user_id")
@@ -28,7 +32,7 @@ func (c *WithdrawalController) GetBalance(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &api.GetBalanceResponse{
+	ctx.JSON(http.StatusOK, &GetBalanceResponse{
 		Current:   res.Current,
 		Withdrawn: res.Withdrawn,
 	})

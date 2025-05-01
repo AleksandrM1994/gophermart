@@ -3,16 +3,21 @@ package main
 import (
 	"net/http"
 	"time"
+	_ "time/tzdata"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 
 	"github.com/gophermart/config"
-	"github.com/gophermart/internal/handlers/order"
-	"github.com/gophermart/internal/handlers/user"
-	"github.com/gophermart/internal/handlers/withdrawal"
+	orderHandlers "github.com/gophermart/internal/handlers/order"
+	userHandlers "github.com/gophermart/internal/handlers/user"
+	withdrawalHandlers "github.com/gophermart/internal/handlers/withdrawal"
 	"github.com/gophermart/internal/repository"
+	"github.com/gophermart/internal/service/accrual"
+	orderService "github.com/gophermart/internal/service/order"
+	userService "github.com/gophermart/internal/service/user"
+	withdrawalService "github.com/gophermart/internal/service/withdrawal"
 )
 
 func main() {
@@ -29,7 +34,10 @@ func main() {
 
 	lg := *logger.Sugar()
 
-	cfg := config.Init()
+	cfg, errNewConfig := config.NewConfig()
+	if errNewConfig != nil {
+		panic(errNewConfig)
+	}
 
 	g := gin.Default()
 
@@ -38,14 +46,23 @@ func main() {
 		lg.Fatalf("repository.NewRepository, %w", err)
 	}
 
-	userController := user.NewUserController(cfg, &lg, repo)
+	userRepo := repository.NewUserRepository(repo)
+	orderRepo := repository.NewOrderRepository(repo)
+	withdrawalRepo := repository.NewWithdrawalRepository(repo)
+
+	accrualService := accrual.NewAccrualService(&lg, cfg)
+	userServiceImpl := userService.NewService(&lg, cfg, userRepo)
+	orderServiceImpl := orderService.NewService(&lg, cfg, userRepo, orderRepo, accrualService)
+	withdrawalServiceImpl := withdrawalService.NewService(&lg, cfg, userRepo, withdrawalRepo)
+
+	userController := userHandlers.NewUserController(cfg, &lg, userServiceImpl)
 	userController.RegisterRoutes(g)
 
-	orderController := order.NewOrderController(&lg, cfg, repo)
-	orderController.Register(g)
+	orderController := orderHandlers.NewOrderController(&lg, cfg, userServiceImpl, orderServiceImpl)
+	orderController.RegisterRoutes(g)
 
-	withdrawalController := withdrawal.NewWithdrawalController(&lg, cfg, repo)
-	withdrawalController.Register(g)
+	withdrawalController := withdrawalHandlers.NewWithdrawalController(&lg, cfg, userServiceImpl, withdrawalServiceImpl)
+	withdrawalController.RegisterRoutes(g)
 
 	server := &http.Server{
 		Addr:         cfg.HTTPAddress,

@@ -2,14 +2,20 @@ package withdrawal
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 
 	custom_errs "github.com/gophermart/internal/errors"
-	"github.com/gophermart/internal/handlers/withdrawal/api"
 	"github.com/gophermart/internal/service/withdrawal/dto"
 )
+
+type GetWithdrawalsInfoResponse struct {
+	OrderID     string    `json:"order"`
+	Sum         float32   `json:"sum"`
+	ProcessedAt time.Time `json:"processed_at"`
+}
 
 func (c *WithdrawalController) GetWithdrawalsInfo(ctx *gin.Context) {
 	value, ok := ctx.Get("user_id")
@@ -31,7 +37,7 @@ func (c *WithdrawalController) GetWithdrawalsInfo(ctx *gin.Context) {
 		return
 	}
 
-	res := make([]*api.GetWithdrawalsInfoResponse, 0)
+	res := make([]GetWithdrawalsInfoResponse, 0)
 	errCopy := copier.Copy(&res, &withdrawals)
 	if errCopy != nil {
 		ctx.JSON(http.StatusInternalServerError, custom_errs.ErrorResponse{
